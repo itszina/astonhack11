@@ -1,5 +1,4 @@
-# AstonHack11 – Majestic Interactive Advert
-
+# AstonHack11 
 ## Theme
 Community – Connect, Support, Empower
 
