@@ -50,7 +50,7 @@ Tracks total sessions completed.
 Calculates average focus percentage.
 Unlockable achievements reward user progress and consistency.
 
-Gamification Concept
+### Gamification Concept
 
 The tree growth mechanic encourages deep focus by visually rewarding attention:
 
@@ -60,6 +60,9 @@ The tree growth mechanic encourages deep focus by visually rewarding attention:
 - 🌲 High Focus → Full Growth Tree
 
 Loss of focus slows or stops growth, reinforcing consistent attention.
+
+### Community 
+The users are able to invite and actively share their focus progress , creating a forest to encourage focus and attention. 
 
 ### TechStack
 - HTML
