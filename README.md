@@ -14,4 +14,4 @@ Project repository: [Link to Octo-Bounce](https://github.com/itszina/astonhack11
 - Zina Samha
 - Sama Alzahrani
 - Tarfah
-- Jennifer
+- Jennifer Ansah
