@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Focus Bloom</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+  <div class="phone">
+    <!-- iOS bar -->
+    <div class="iosBar">
+      <div class="iosTime">9:41</div>
+      <div class="iosRight">
+        <span class="sig"></span>
+        <span class="wifi"></span>
+        <span class="bat"></span>
+      </div>
+    </div>
+
+    <!-- Header (simple) -->
+    <header class="topHeader" id="topHeader">
+      <button class="circleBtn" id="backBtn" aria-label="Back" hidden>
+        <span class="backChevron">‹</span>
+      </button>
+      <div class="topTitle" id="topTitle"></div>
+      <button class="circleBtn ghost" id="rightBtn" aria-label="Right" hidden>+</button>
+    </header>
+
+    <main class="stack">
+
+      <!-- SIGN IN -->
+      <section class="screen active" data-screen="signin">
+        <div class="signinWrap">
+          <div class="logoRing">
+            <!-- Plant -->
+            <svg class="plant" viewBox="0 0 140 140" aria-hidden="true">
+              <defs>
+                <linearGradient id="gLeaf" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#4BA84D"/>
+                  <stop offset="1" stop-color="#2E7B36"/>
+                </linearGradient>
+                <linearGradient id="gLeaf2" x1="0" y1="1" x2="1" y2="0">
+                  <stop offset="0" stop-color="#7DDC70"/>
+                  <stop offset="1" stop-color="#39A34A"/>
+                </linearGradient>
+              </defs>
+              <g transform="translate(14,18)">
+                <path d="M52 90 C30 86, 18 70, 18 56 C20 36, 38 26, 52 30 C44 46, 48 70, 52 90Z" fill="url(#gLeaf2)"/>
+                <path d="M68 92 C54 84, 46 68, 46 54 C48 34, 70 24, 84 30 C74 48, 70 68, 68 92Z" fill="url(#gLeaf)"/>
+                <path d="M84 88 C98 86, 112 74, 112 56 C110 34, 88 24, 74 30 C82 46, 88 66, 84 88Z" fill="url(#gLeaf2)"/>
+                <path d="M44 98 C55 90, 70 90, 86 98" stroke="#D86B67" stroke-width="10" stroke-linecap="round"/>
+              </g>
+            </svg>
+          </div>
+
+          <h1 class="brandTitle">Canopy</h1>
+          <div class="subTitle">Sign in</div>
+
+          <div class="form">
+            <label>Email</label>
+            <input type="email" />
+            <label>Password</label>
+            <input type="password" />
+            <button class="btnPrimary" id="signinBtn">Sign in</button>
+
+            <div class="rowSpace">
+              <button class="link" data-go="reset">Forget Password</button>
+              <button class="link accent" data-go="signup">Sign up</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SIGN UP -->
+      <section class="screen" data-screen="signup">
+        <div class="page">
+          <h2 class="h2">Sign up</h2>
+
+          <div class="form">
+            <label>Full Name</label>
+            <input value="Daniel Jack" />
+            <label>Your Email</label>
+            <input value="Dj24@student.bham.ac.uk" />
+
+            <label>Date of Birth</label>
+            <div class="inputRow">
+              <input placeholder="mm/dd/yyyy" />
+              <button class="miniBtn" aria-label="Calendar">⌄</button>
+            </div>
+
+            <label>Average zoning out time (in lecture)</label>
+            <input value="30:00 min" />
+
+            <label>Password</label>
+            <input type="password" value="password" />
+
+            <label>Re enter password</label>
+            <input type="password" class="warn" value="password" />
+
+            <button class="btnPrimary" data-go="signin">Sign up</button>
+
+            <div class="rowCenter">
+              <span class="muted">Already have an account?</span>
+              <button class="link accent" data-go="signin">Login</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESET -->
+      <section class="screen" data-screen="reset">
+        <div class="page">
+          <h2 class="h2">Reset password</h2>
+          <p class="muted small">Please enter your email to reset the password</p>
+
+          <div class="form">
+            <label>Your Email</label>
+            <input value="Dj24@student.bham.ac.uk" />
+
+            <label class="mt">Check your email</label>
+            <p class="muted small">
+              We sent a reset link to Dj234@student……..uk. Enter 5 digit code that mentioned in the email
+            </p>
+
+            <div class="codeRow">
+              <input class="code" maxlength="1" />
+              <input class="code" maxlength="1" />
+              <input class="code" maxlength="1" />
+              <input class="code" maxlength="1" />
+              <input class="code" maxlength="1" />
+            </div>
+
+            <label class="mt">Password</label>
+            <div class="inputRow">
+              <input type="password" value="password" />
+              <button class="miniBtn" aria-label="Show">👁</button>
+            </div>
+
+            <label>Confirm Password</label>
+            <div class="inputRow">
+              <input type="password" value="password" />
+              <button class="miniBtn" aria-label="Show">👁</button>
+            </div>
+
+            <button class="btnPrimary" data-go="signin">Reset Password</button>
+
+            <div class="rowSpace">
+              <span class="muted small">Haven’t got the email yet?</span>
+              <button class="link accent">Resend email</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HOME -->
+      <section class="screen" data-screen="home">
+        <div class="page">
+          <div class="homeTopRow">
+            <button class="profileDotBtn" id="openProfile" aria-label="Profile"></button>
+            <button class="circleBtn ghost" title="Help">?</button>
+          </div>
+
+          <div class="homeTitleRow">
+            <h1 class="homeTitle">Canopy</h1>
+
+            <div class="miniPlantWrap" aria-hidden="true">
+              <svg class="miniPlant" viewBox="0 0 140 140">
+                <g transform="translate(18,22)">
+                  <path d="M52 90 C30 86, 18 70, 18 56 C20 36, 38 26, 52 30 C44 46, 48 70, 52 90Z" fill="#7DDC70"/>
+                  <path d="M68 92 C54 84, 46 68, 46 54 C48 34, 70 24, 84 30 C74 48, 70 68, 68 92Z" fill="#2E7B36" opacity=".85"/>
+                  <path d="M84 88 C98 86, 112 74, 112 56 C110 34, 88 24, 74 30 C82 46, 88 66, 84 88Z" fill="#7DDC70"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <div class="watchCard">
+            <div class="muted small">Connected Smartwatch</div>
+            <div class="watchRow">
+              <div class="watchName">Daniel watch 1</div>
+              <div class="statusGreen"></div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="forestBlock">
+            <div class="muted small center">View Forest</div>
+            <div class="islandWrap" aria-hidden="true">
+              <!-- island -->
+              <svg class="islandSvg" viewBox="0 0 420 260">
+                <defs>
+                  <filter id="sh" x="-30%" y="-30%" width="160%" height="160%">
+                    <feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#000" flood-opacity=".18"/>
+                  </filter>
+                </defs>
+                <g filter="url(#sh)">
+                  <path d="M210 35 L390 120 L210 210 L30 120 Z" fill="#E9F6E3" stroke="rgba(0,0,0,.06)" />
+                </g>
+                <path d="M210 60 L360 125 L210 195 L60 125 Z" fill="#62C45E" opacity=".95"/>
+                <g transform="translate(196,70)">
+                  <rect x="10" y="55" width="22" height="44" rx="8" fill="#8B5A3C"/>
+                  <circle cx="20" cy="40" r="34" fill="#2FA24A"/>
+                  <circle cx="-4" cy="50" r="18" fill="#2FA24A"/>
+                  <circle cx="44" cy="52" r="18" fill="#2FA24A"/>
+                  <circle cx="20" cy="26" r="10" fill="#F28B2C"/>
+                  <circle cx="4" cy="18" r="6" fill="#F2B02C"/>
+                  <circle cx="22" cy="12" r="6" fill="#F2B02C"/>
+                  <circle cx="38" cy="18" r="6" fill="#F2B02C"/>
+                </g>
+                <g transform="translate(300,150)">
+                  <ellipse cx="40" cy="32" rx="34" ry="24" fill="#fff"/>
+                  <circle cx="20" cy="24" r="16" fill="#fff"/>
+                  <ellipse cx="10" cy="6" rx="8" ry="18" fill="#fff"/>
+                  <ellipse cx="24" cy="6" rx="8" ry="18" fill="#fff"/>
+                  <circle cx="16" cy="24" r="2.5" fill="#222"/>
+                  <circle cx="26" cy="24" r="2.5" fill="#222"/>
+                  <circle cx="22" cy="30" r="3" fill="#E08DA0"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <button class="btnPrimary outline" id="goLecture">+ ADD SESSION</button>
+        </div>
+      </section>
+
+      <!-- NOTES (folders) -->
+      <section class="screen" data-screen="notes">
+        <div class="page">
+          <div class="notesTop">
+            <button class="profileDotBtn" id="openProfile2" aria-label="Profile"></button>
+            <h2 class="h2 centerGrow">My Notes</h2>
+            <button class="circleBtn" title="Add">+</button>
+          </div>
+
+          <div class="search">
+            <span class="sIcon">🔍</span>
+            <input placeholder="Search" />
+          </div>
+
+          <div class="rows">
+            <button class="row" data-go="weeks" data-subject="AI 1">
+              <span class="folder"></span><span class="rowText">AI 1</span>
+            </button>
+            <div class="rule"></div>
+
+            <button class="row" data-go="weeks" data-subject="Computer Vision">
+              <span class="folder"></span><span class="rowText">Computer Vision</span>
+            </button>
+            <div class="rule"></div>
+
+            <button class="row" data-go="weeks" data-subject="Math & Logic">
+              <span class="folder"></span><span class="rowText">Math & Logic</span>
+            </button>
+            <div class="rule"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WEEKS -->
+      <section class="screen" data-screen="weeks">
+        <div class="page">
+          <div class="weeksTop">
+            <button class="profileDotBtn" id="openProfile3" aria-label="Profile"></button>
+            <h2 class="h2 centerGrow" id="weeksHdr">My Notes → AI 1</h2>
+            <button class="circleBtn" title="Add">+</button>
+          </div>
+
+          <div class="search">
+            <span class="sIcon">🔍</span>
+            <input placeholder="Search" />
+          </div>
+
+          <div class="rows">
+            <button class="row" data-go="editor" data-week="Week 03">
+              <span class="doc"></span><span class="rowText">Week 03</span>
+            </button>
+            <div class="rule"></div>
+
+            <button class="row" data-go="editor" data-week="Week 02">
+              <span class="doc"></span><span class="rowText">Week 02</span>
+            </button>
+            <div class="rule"></div>
+
+            <button class="row" data-go="editor" data-week="Week 01">
+              <span class="doc"></span><span class="rowText">Week 01</span>
+            </button>
+            <div class="rule"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EDITOR -->
+      <section class="screen" data-screen="editor">
+        <div class="page">
+          <div class="toolbar">
+            <button class="tool">✏️</button>
+            <button class="tool">🖊️</button>
+            <button class="tool">📏</button>
+            <button class="tool">🧽</button>
+            <button class="tool">🎨</button>
+            <button class="tool ai">AI</button>
+          </div>
+
+          <div class="paper">
+            <div class="paperLines"></div>
+            <textarea class="paperText"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- LECTURE MODE -->
+      <section class="screen" data-screen="lecture">
+        <div class="page">
+          <h1 class="lectureTitle">Lecture Mode</h1>
+
+          <div class="lectureCard">
+            <div class="segments">
+              <button class="seg active" data-mode="focus">Focus</button>
+              <button class="seg" data-mode="break">Break</button>
+              <button class="seg" data-mode="rest">Rest</button>
+            </div>
+
+            <div class="timer" id="timer">30:00</div>
+
+            <div class="timerRow">
+              <button class="tinyCircle" id="timerReset">⟲</button>
+              <button class="smallPrimary" id="timerStart">Start</button>
+              <button class="tinyCircle">⚙</button>
+            </div>
+          </div>
+
+          <div class="takingNotes">
+            <div class="takingLabel">Taking notes?</div>
+            <div class="two">
+              <button class="pill">No</button>
+              <button class="pill active">Yes</button>
+            </div>
+          </div>
+
+          <button class="btnPrimary" data-go="editor">Start session</button>
+        </div>
+      </section>
+
+      <!-- PROGRESS -->
+      <section class="screen" data-screen="progress">
+        <div class="page">
+          <div class="progressTop">
+            <button class="profileDotBtn" id="openProfile4" aria-label="Profile"></button>
+          </div>
+
+          <h1 class="dashTitle">Dashboard</h1>
+
+          <div class="tabs">
+            <button class="tab active">Day</button>
+            <button class="tab">Week</button>
+            <button class="tab">Month</button>
+            <button class="tab">6 Months</button>
+            <button class="tab">Year</button>
+          </div>
+
+          <div class="chartCard">
+            <canvas id="chart" width="320" height="170"></canvas>
+          </div>
+
+          <p class="quote">
+            “Small steps every day create big changes over time. Keep going—progress is progress, no matter how slow.”
+          </p>
+
+          <div class="smile">☺</div>
+        </div>
+      </section>
+
+      <!-- FOREST -->
+      <section class="screen" data-screen="forest">
+        <div class="page">
+          <div class="forestTop">
+            <button class="profileDotBtn" id="openProfile5" aria-label="Profile"></button>
+            <button class="circleBtn ghost" title="Accessibility">♿</button>
+          </div>
+
+          <div class="forestHeader">
+            <h1 class="forestTitle">Daneil’s Forest</h1>
+            <button class="invite" id="openInvite">👥 Invite Friend</button>
+          </div>
+
+          <div class="bigIsland">
+            <div class="islandWrap big" aria-hidden="true">
+              <svg class="islandSvg" viewBox="0 0 420 260">
+                <defs>
+                  <filter id="sh2" x="-30%" y="-30%" width="160%" height="160%">
+                    <feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#000" flood-opacity=".18"/>
+                  </filter>
+                </defs>
+                <g filter="url(#sh2)">
+                  <path d="M210 35 L390 120 L210 210 L30 120 Z" fill="#E9F6E3" stroke="rgba(0,0,0,.06)" />
+                </g>
+                <path d="M210 60 L360 125 L210 195 L60 125 Z" fill="#62C45E" opacity=".95"/>
+                <g transform="translate(196,70)">
+                  <rect x="10" y="55" width="22" height="44" rx="8" fill="#8B5A3C"/>
+                  <circle cx="20" cy="40" r="34" fill="#2FA24A"/>
+                  <circle cx="-4" cy="50" r="18" fill="#2FA24A"/>
+                  <circle cx="44" cy="52" r="18" fill="#2FA24A"/>
+                  <circle cx="20" cy="26" r="10" fill="#F28B2C"/>
+                  <circle cx="4" cy="18" r="6" fill="#F2B02C"/>
+                  <circle cx="22" cy="12" r="6" fill="#F2B02C"/>
+                  <circle cx="38" cy="18" r="6" fill="#F2B02C"/>
+                </g>
+                <g transform="translate(300,150)">
+                  <ellipse cx="40" cy="32" rx="34" ry="24" fill="#fff"/>
+                  <circle cx="20" cy="24" r="16" fill="#fff"/>
+                  <ellipse cx="10" cy="6" rx="8" ry="18" fill="#fff"/>
+                  <ellipse cx="24" cy="6" rx="8" ry="18" fill="#fff"/>
+                  <circle cx="16" cy="24" r="2.5" fill="#222"/>
+                  <circle cx="26" cy="24" r="2.5" fill="#222"/>
+                  <circle cx="22" cy="30" r="3" fill="#E08DA0"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <div class="forestBottomRow">
+            <div class="coinsBox">
+              <span class="coinTxt">100 🪙</span>
+              <button class="miniSquare" id="openStore" title="Store">🛒</button>
+            </div>
+            <button class="editBtn">Edit ✎</button>
+          </div>
+        </div>
+
+        <!-- INVITE MODAL (exact style like screenshot) -->
+        <div class="modal" id="inviteModal" aria-hidden="true">
+          <div class="inviteCard">
+            <div class="inviteTop">
+              <div class="inviteTitle">Invite a friend to view your forest</div>
+              <button class="xBtn" id="closeInvite" aria-label="Close">×</button>
+            </div>
+
+            <div class="inviteSearch">
+              <span class="sIcon">🔍</span>
+              <input id="inviteSearchInput" placeholder="Find your friends to invite them" />
+            </div>
+
+            <div class="inviteTableHead">
+              <div class="thLeft">Name</div>
+              <div class="thSep"></div>
+              <div class="thRight">Invite</div>
+            </div>
+
+            <div class="inviteList" id="inviteList">
+              <!-- rows injected by JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROFILE (exact layout like your screenshot) -->
+      <section class="screen" data-screen="profile">
+        <div class="page">
+          <div class="profileTopRow">
+            <button class="circleBtn ghost" data-go="home" aria-label="Back home">‹</button>
+            <button class="circleBtn ghost" aria-label="Accessibility">♿</button>
+          </div>
+
+          <div class="profileCenter">
+            <div class="profileBigIcon"></div>
+            <div class="profileName">Daniel Jack</div>
+            <div class="profileEmail">Daj234@student.bham.ac.uk</div>
+          </div>
+
+          <div class="profileStatsRow">
+            <div class="statBox">
+              <div class="statLabel">Streak</div>
+              <div class="statValue"><span class="flame">🔥</span> 7</div>
+            </div>
+            <div class="statBox">
+              <div class="statLabel">Total Session Hours</div>
+              <div class="statValue">13</div>
+            </div>
+          </div>
+
+          <div class="profileSection">
+            <div class="secTitle">Connect Smartwatch</div>
+
+            <div class="watchSelect">
+              <div class="btIcon">ᛒ</div>
+              <div class="watchConnected">Connected Watch (Daniel Watch 1)</div>
+              <div class="caret">⌄</div>
+            </div>
+
+            <div class="watchMode">
+              <div class="watchModeTitle">Watch Mode</div>
+              <div class="toggleRow">
+                <div class="toggleLabel">Vibration</div>
+                <button class="toggle on" aria-label="Toggle vibration"><span></span></button>
+              </div>
+              <div class="toggleRow">
+                <div class="toggleLabel">Flash</div>
+                <button class="toggle" aria-label="Toggle flash"><span></span></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="settingsRow">
+            <div class="gear">⚙</div>
+            <div class="settingsText">Settings</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STORE -->
+      <section class="screen" data-screen="store">
+        <div class="page">
+          <div class="storeHeaderRow">
+            <button class="circleBtn ghost" data-go="forest" aria-label="Back">‹</button>
+            <h1 class="storeTitle">Focus Coin Store</h1>
+          </div>
+
+          <div class="search storeSearch">
+            <span class="sIcon">🔍</span>
+            <input id="storeSearchInput" placeholder="Search" />
+          </div>
+
+          <div class="storeTopRight">
+            <div class="coinPill">
+              <span class="coinNum">100</span>
+              <span class="coinEmoji">🪙</span>
+            </div>
+          </div>
+
+          <div class="storeGrid" id="storeGrid">
+            <!-- cards injected by JS -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom nav -->
+    <nav class="bottomNav">
+      <button class="nav active" data-go="home">
+        <div class="ico">⌂</div><div class="lbl">Home</div>
+      </button>
+      <button class="nav" data-go="notes">
+        <div class="ico">🗒</div><div class="lbl">Notes</div>
+      </button>
+      <button class="nav" data-go="progress">
+        <div class="ico">↗</div><div class="lbl">Progress</div>
+      </button>
+      <button class="nav" data-go="forest">
+        <div class="ico">🌴</div><div class="lbl">Your forest</div>
+      </button>
+    </nav>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
