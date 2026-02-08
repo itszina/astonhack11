@@ -10,10 +10,6 @@ Project repository: [Link to Community project](https://pages.github.com/)
 A browser-based mini-game developed as an interactive prototype. The player controls an octopus and must reach the ocean surface by using a limited number of bubbles and by interacting with in-game elements such as jellyfish.<br/>
 Project repository: [Link to Octo-Bounce](https://github.com/itszina/astonhack11/tree/main/octo-bounce)
 
-
-## Live Demo
-https://itszina.github.io/astonhack11
-
 ## Team Members
 - Zina Samha
 - Sama Alzahrani
