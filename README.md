@@ -8,7 +8,7 @@ Project repository: [Link to Community project](https://pages.github.com/)
    
 2) **Octo-Bounce - Magestic + Untold Studios**<br/>
 A browser-based mini-game developed as an interactive prototype. The player controls an octopus and must reach the ocean surface by using a limited number of bubbles and by interacting with in-game elements such as jellyfish.<br/>
-Project repository: [Link to Octo-Bounce](https://pages.github.com/)
+Project repository: [Link to Octo-Bounce](https://github.com/itszina/astonhack11/tree/main/octo-bounce)
 
 
 ## Live Demo
