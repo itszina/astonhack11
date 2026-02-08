@@ -1,22 +1,15 @@
 # AstonHack11 
-## Theme
-Community – Connect, Support, Empower
+This repository contains two prototypes built for AstonHack11 Hackthon.
 
-## Project Overview
-An interactive octopus-based advert experience for Majestic.
-Each tentacle represents a Majestic service and provides user interaction through animations and mini-game mechanics.
+## Projects Overview
+1) **Community – AstonHack11** <br/>
+     Canopy is a student-focused system designed to help reduce zoning out during lectures. It combines a smartwatch and a mobile app to detect early signs of attention loss using physiological signals such as heart rate, movement, skin temperature, and EDA. When focus drops, the watch gives a gentle cue (vibration or screen flash) to help the student refocus before missing important content. The app tracks focus sessions, shows progress over time, and uses AI summaries to highlight any missed parts. To keep students motivated, Canopy turns progress into a growing virtual forest, making focus visible, rewarding, and easier to maintain.<br/>
+Project repository: [Link to Community project](https://pages.github.com/)
+   
+2) **Octo-Bounce - Magestic + Untold Studios**<br/>
+A browser-based mini-game developed as an interactive prototype. The player controls an octopus and must reach the ocean surface by using a limited number of bubbles and by interacting with in-game elements such as jellyfish.<br/>
+Project repository: [Link to Octo-Bounce](https://pages.github.com/)
 
-## Tech Stack
-- HTML
-- CSS
-- JavaScript
-- GSAP Animation
-
-## Features
-- Animated octopus UI
-- Interactive tentacle navigation
-- Mini engagement game
-- Community-focused storytelling
 
 ## Live Demo
 https://itszina.github.io/astonhack11
