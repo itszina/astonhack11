@@ -5,7 +5,7 @@ The player controls an octopus and must reach the ocean surface by spawning bubb
 
 ---
 
-## Gameplay Overview
+### Gameplay Overview
 
 - Click or tap to spawn bubbles.
 - The octopus gains height by bouncing off bubbles and jellyfish.
@@ -16,16 +16,20 @@ The player controls an octopus and must reach the ocean surface by spawning bubb
 
 ---
 
-## Technical Overview
----
-
-## Features
+### Features
 
 - Canvas-based 2D game rendering
 - Gravity and bounce-based movement system
 - Collision detection with bubbles and jellyfish
 - Timer and progress tracking
-- Win and lose states with restart flow
+- Win and lose states
 - Instruction screen and countdown sequence
 
+---
+
+### Tech Stack
+- HTML
+- CSS
+- JavaScript
+- GSAP Animation
 ---
