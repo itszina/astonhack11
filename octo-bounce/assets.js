@@ -1,0 +1,20 @@
+window.ASSET_MAP = {
+  octopus_neutral: { url: "assets/images/octopus_neutral.png" },
+  octopus_squashed: { url: "assets/images/octopus_squashed.png" },
+  octopus_stretched: { url: "assets/images/octopus_stretched.png" },
+  jellyfish_normal: { url: "assets/images/jellyfish_normal.png" },
+  jellyfish_highbounce: { url: "assets/images/jellyfish_highbounce.png" },
+  decorative_fish_yellow: { url: "assets/images/decorative_fish_yellow.png" },
+  decorative_fish_teal: { url: "assets/images/decorative_fish_teal.png" },
+  decorative_fish_red: { url: "assets/images/decorative_fish_red.png" },
+  coral_silhouette_1: { url: "assets/images/coral_silhouette_1.png" },
+  coral_silhouette_2: { url: "assets/images/coral_silhouette_2.png" },
+  seaweed_strand_1: { url: "assets/images/seaweed_strand_1.png" },
+  seaweed_strand_2: { url: "assets/images/seaweed_strand_2.png" },
+  
+  bubble_pop_sfx: { url: "./assets/audio/bubble_pop_sfx.mp3" },
+  bounce_sfx: { url: "./assets/audio/bounce_sfx.mp3" },
+  victory_sfx: { url: "./assets/audio/victory_sfx.mp3" },
+  defeat_sfx: { url: "./assets/audio/defeat_sfx.mp3" },
+  bubble_spawn_sfx: { url: "./assets/audio/bubble_spawn_sfx.mp3" },
+};

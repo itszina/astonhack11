@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Octo-Bounce</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap");
+
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        touch-action: none;
+        -ms-touch-action: none;
+        font-family: "Fredoka", "Arial", sans-serif;
+        background: #0b1e2a; /* side bars */
+      }
+
+      /* Keep 720x1280 aspect ratio (no stretching) */
+      #gameWrap {
+        position: relative;
+        width: min(100vw, calc(100vh * 0.5625)); /* 9/16 */
+        height: min(100vh, calc(100vw * 1.7777778)); /* 16/9 */
+        margin: 0 auto;
+      }
+
+      #gameCanvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        cursor: crosshair;
+      }
+
+      .ui-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .timer {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        font-size: 56px;
+        font-weight: 700;
+        color: white;
+        text-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+        background: rgba(0, 0, 0, 0.35);
+        padding: 12px 24px;
+        border-radius: 16px;
+        min-width: 100px;
+        text-align: center;
+        pointer-events: none;
+      }
+
+      .timer.warning {
+        color: #ff4444;
+        background: rgba(255, 68, 68, 0.2);
+        animation: pulse 0.5s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .progress-bar {
+        position: absolute;
+        left: 24px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 48px;
+        height: 480px;
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 24px;
+        overflow: visible;
+        pointer-events: none;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .progress-fill {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 0%;
+        background: linear-gradient(to top, #4ecdc4, #8abadb);
+        transition: height 0.3s cubic-bezier(0, 0, 0.2, 1);
+        border-radius: 24px;
+        box-shadow: 0 0 16px rgba(78, 205, 196, 0.5);
+      }
+
+      .progress-text {
+        position: absolute;
+        left: 24px;
+        top: 50%;
+        transform: translate(-50%, calc(-50% + 260px));
+        font-size: 24px;
+        font-weight: 700;
+        color: white;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+        pointer-events: none;
+        background: rgba(0, 0, 0, 0.35);
+        padding: 8px 12px;
+        border-radius: 12px;
+        min-width: 60px;
+        text-align: center;
+      }
+
+      .game-over-screen {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        pointer-events: auto;
+      }
+
+      .game-over-screen.show {
+        display: flex;
+      }
+
+      .game-over-title {
+        font-size: 56px;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 24px;
+        text-shadow: 0 4px 16px rgba(0, 0, 0, 0.8);
+      }
+
+      .game-over-title.victory {
+        color: #4ecdc4;
+      }
+
+      .game-over-title.defeat {
+        color: #ff6b6b;
+      }
+
+      .game-over-message {
+        font-size: 28px;
+        font-weight: 400;
+        color: white;
+        margin-bottom: 48px;
+        text-align: center;
+        padding: 0 48px;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+      }
+
+      .restart-button {
+        padding: 28px 72px;
+        font-size: 32px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #4ecdc4, #44a08d);
+        color: white;
+        border: none;
+        border-radius: 56px;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        transition: transform 0.15s cubic-bezier(0, 0, 0.2, 1),
+          box-shadow 0.15s cubic-bezier(0, 0, 0.2, 1);
+        pointer-events: auto;
+        min-height: 96px;
+        min-width: 280px;
+      }
+
+      .restart-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+      }
+
+      .restart-button:active {
+        transform: translateY(0);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+      }
+
+      .bubble-counter {
+        position: absolute;
+        top: 24px;
+        left: 24px;
+        font-size: 32px;
+        font-weight: 600;
+        color: white;
+        text-shadow: 0 3px 8px rgba(0, 0, 0, 0.8);
+        background: rgba(0, 0, 0, 0.35);
+        padding: 12px 20px;
+        border-radius: 16px;
+        pointer-events: none;
+      }
+
+      .tap-indicator {
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        border: 4px solid rgba(255, 255, 255, 0.8);
+        border-radius: 50%;
+        pointer-events: none;
+        animation: ripple 0.6s ease-out;
+      }
+
+      @keyframes ripple {
+        0% {
+          transform: translate(-50%, -50%) scale(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(2);
+          opacity: 0;
+        }
+      }
+
+      .instructions-screen {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.88);
+        display: none;
+        pointer-events: auto;
+        overflow: hidden; /* no scrolling */
+        box-sizing: border-box;
+        padding: clamp(16px, 3vw, 28px);
+      }
+
+      .instructions-screen.show {
+        display: flex;
+      }
+
+      .instructions-layout {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+
+      .instructions-title {
+        font-size: clamp(28px, 4vw, 44px);
+        font-weight: 700;
+        color: #4ecdc4;
+        margin: 0 0 clamp(10px, 2vw, 18px) 0;
+        text-shadow: 0 4px 16px rgba(0, 0, 0, 0.8);
+        text-align: center;
+      }
+
+      .instructions-content {
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+        max-width: 640px;
+        margin: 0 auto;
+
+        display: grid;
+        grid-template-rows: repeat(5, minmax(0, 1fr));
+        gap: clamp(8px, 1.2vh, 14px);
+
+        overflow: hidden; /* still no scroll */
+      }
+
+      .instruction-item {
+        background: rgba(78, 205, 196, 0.1);
+        border-left: 4px solid #4ecdc4;
+        border-radius: 10px;
+        text-align: left;
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
+
+        min-height: 0;
+        padding: clamp(10px, 1.8vh, 16px);
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .instruction-item-title {
+        font-weight: 700;
+        color: #4ecdc4;
+        margin-bottom: 6px;
+        font-size: clamp(16px, 2.2vw, 22px);
+      }
+
+      .instruction-item-text {
+        color: #e0e0e0;
+        font-size: clamp(13px, 1.7vw, 17px);
+        line-height: 1.25;
+      }
+
+      .start-button {
+        margin: clamp(12px, 2vh, 18px) auto 0 auto;
+        padding: clamp(16px, 2.6vh, 22px) clamp(36px, 6vw, 64px);
+        font-size: clamp(18px, 2.6vw, 28px);
+        font-weight: 700;
+        background: linear-gradient(135deg, #4ecdc4, #44a08d);
+        color: white;
+        border: none;
+        border-radius: 56px;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        transition: transform 0.15s cubic-bezier(0, 0, 0.2, 1),
+          box-shadow 0.15s cubic-bezier(0, 0, 0.2, 1);
+        pointer-events: auto;
+        min-height: 76px;
+        min-width: 240px;
+      }
+
+      .start-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+      }
+
+      .start-button:active {
+        transform: translateY(0);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+      }
+
+      @media (max-height: 760px) {
+        .instruction-item {
+          padding: 10px;
+        }
+        .instruction-item-title {
+          margin-bottom: 4px;
+          font-size: 16px;
+        }
+        .instruction-item-text {
+          font-size: 13px;
+          line-height: 1.2;
+        }
+      }
+
+      .countdown-screen {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        pointer-events: auto;
+      }
+
+      .countdown-screen.show {
+        display: flex;
+      }
+
+      .countdown-number {
+        font-size: 180px;
+        font-weight: 700;
+        color: #4ecdc4;
+        text-shadow: 0 8px 32px rgba(78, 205, 196, 0.8);
+        animation: countdownPulse 1s ease-out;
+      }
+
+      @keyframes countdownPulse {
+        0% {
+          transform: scale(0.3);
+          opacity: 1;
+        }
+        70% {
+          transform: scale(1.1);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 0.8;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .timer.warning {
+          animation: none;
+        }
+        .tap-indicator {
+          animation: none;
+          opacity: 0;
+        }
+        .countdown-number {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="gameWrap">
+      <canvas id="gameCanvas" width="720" height="1280"></canvas>
+
+      <div class="ui-overlay">
+        <div class="timer" id="timer">60</div>
+        <div class="bubble-counter" id="bubbleCounter">Bubbles: 0/3</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">0%</div>
+
+        <div class="game-over-screen" id="gameOverScreen">
+          <div class="game-over-title" id="gameOverTitle">Victory!</div>
+          <div class="game-over-message" id="gameOverMessage">You reached the surface!</div>
+          <button class="restart-button" id="restartButton">Play Again</button>
+        </div>
+
+        <div class="instructions-screen" id="instructionsScreen">
+          <div class="instructions-layout">
+            <div class="instructions-title">🐙 Octo-Bounce</div>
+
+            <div class="instructions-content">
+              <div class="instruction-item">
+                <div class="instruction-item-title">🎯 Your Goal</div>
+                <div class="instruction-item-text">
+                  Guide your octopus from the ocean floor to the surface before time runs out!
+                </div>
+              </div>
+
+              <div class="instruction-item">
+                <div class="instruction-item-title">💧 Bubbles (Your Presses)</div>
+                <div class="instruction-item-text">
+                  You have exactly <strong>20 bubbles</strong> to use. Each tap/click spawns a bubble.
+                  Use them wisely to bounce your octopus upward. If you exceed 20 bubbles, you lose!
+                </div>
+              </div>
+
+              <div class="instruction-item">
+                <div class="instruction-item-title">🪼 Pink Jellyfish (Normal Boost)</div>
+                <div class="instruction-item-text">
+                  Bounce off pink jellyfish for a standard bounce boost to climb higher.
+                </div>
+              </div>
+
+              <div class="instruction-item">
+                <div class="instruction-item-title">💜 Purple Jellyfish (High Bounce)</div>
+                <div class="instruction-item-text">
+                  Bounce off purple jellyfish for a <strong>super boost</strong> — they launch you much higher!
+                </div>
+              </div>
+
+              <div class="instruction-item">
+                <div class="instruction-item-title">📊 Progress Bar</div>
+                <div class="instruction-item-text">
+                  Watch the progress bar on the left. Reach 100% to win!
+                </div>
+              </div>
+            </div>
+
+            <button class="start-button" id="startButton">Start Playing</button>
+          </div>
+        </div>
+
+        <div class="countdown-screen" id="countdownScreen">
+          <div class="countdown-number" id="countdownNumber">3</div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./assets.js"></script>
+    <script src="./lib.js"></script>
+
+    <script>
+      window.gameConfig = {
+        oceanColorScheme: "classic",
+        octopusColor: "#FF8C42",
+        octopusSize: 1,
+        bubbleOpacity: 0.8,
+        timerDuration: 60,
+        gravityStrength: 1,
+        bouncePower: 1,
+        jellyfishSpeed: 1,
+        maxBubbles: 3,
+      };
+
+      window.mode = "play";
+    </script>
+
+    <script>
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+
+      const assets = {};
+      let audioContext = null;
+      let audioBuffers = {};
+
+      const CANVAS_WIDTH = 720;
+      const CANVAS_HEIGHT = 1280;
+      const OCEAN_FLOOR_Y = 3840;
+      const SURFACE_Y = 0;
+
+      const COLOR_SCHEMES = {
+        classic: ["#2a5a6b", "#4a7a8b", "#6a9aab", "#8abadb"],
+        sunset: ["#5a3a4b", "#7a5a6b", "#9a7a8b", "#ba9aab"],
+        deep: ["#1a2a4b", "#2a4a6b", "#4a6a8b", "#6a8aab"],
+        emerald: ["#2a4a3b", "#4a6a5b", "#6a8a7b", "#8aaa9b"],
+        coral: ["#5a3a4b", "#7a5a6b", "#9a7a8b", "#ba9aab"],
+      };
+
+      let currentMode = "play";
+      let gameState = "playing"; // 'ready', 'playing', 'victory', 'defeat'
+      let octopus = null;
+      let bubbles = [];
+      let jellyfish = [];
+      let decorativeFish = [];
+      let floatingMessages = [];
+      let camera = { y: OCEAN_FLOOR_Y };
+      let timer = 60;
+      let progress = 0;
+      let lastTime = 0;
+      let animationId = null;
+      let floorTimer = 0;
+      let totalBubblesSpawned = 0;
+
+      const rewards = [
+        "Led by values.",
+        "Driven by creativity.",
+        "Enabled by next-generation technology.",
+        "We are Untold Studios.",
+      ];
+
+      let GRAVITY = 800;
+      let BOUNCE_VELOCITY = -600;
+      let JELLYFISH_SPAWN_INTERVAL = 3000;
+      let lastJellyfishSpawn = 0;
+
+      const timerEl = document.getElementById("timer");
+      const bubbleCounterEl = document.getElementById("bubbleCounter");
+      const progressFillEl = document.getElementById("progressFill");
+      const progressTextEl = document.getElementById("progressText");
+      const gameOverScreen = document.getElementById("gameOverScreen");
+      const gameOverTitle = document.getElementById("gameOverTitle");
+      const gameOverMessage = document.getElementById("gameOverMessage");
+      const restartButton = document.getElementById("restartButton");
+      const instructionsScreen = document.getElementById("instructionsScreen");
+      const startButton = document.getElementById("startButton");
+      const countdownScreen = document.getElementById("countdownScreen");
+      const countdownNumber = document.getElementById("countdownNumber");
+
+      let countdownActive = false;
+
+      async function preloadAssets() {
+        lib.log("Preloading assets...");
+
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        const imageAssets = [
+          "octopus_neutral",
+          "octopus_squashed",
+          "octopus_stretched",
+          "jellyfish_normal",
+          "jellyfish_highbounce",
+          "decorative_fish_yellow",
+          "decorative_fish_teal",
+          "decorative_fish_red",
+          "coral_silhouette_1",
+          "coral_silhouette_2",
+          "seaweed_strand_1",
+          "seaweed_strand_2",
+        ];
+
+        const audioAssets = [
+          "bubble_pop_sfx",
+          "bounce_sfx",
+          "victory_sfx",
+          "defeat_sfx",
+          "bubble_spawn_sfx",
+        ];
+
+        const imagePromises = imageAssets.map((id) => {
+          return new Promise((resolve) => {
+            const assetInfo = lib.getAsset(id);
+            if (!assetInfo || !assetInfo.url) {
+              lib.log(`Missing image mapping for: ${id}`);
+              return resolve();
+            }
+
+            const img = new Image();
+            img.onload = () => {
+              assets[id] = { img, ...assetInfo };
+              resolve();
+            };
+            img.onerror = () => {
+              lib.log(`Failed to load image: ${id} -> ${assetInfo.url}`);
+              resolve();
+            };
+            img.src = assetInfo.url;
+          });
+        });
+
+        const audioPromises = audioAssets.map((id) => {
+          return new Promise(async (resolve) => {
+            const assetInfo = lib.getAsset(id);
+            if (!assetInfo || !assetInfo.url) {
+              lib.log(`Missing audio mapping for: ${id}`);
+              return resolve();
+            }
+
+            try {
+              const response = await fetch(assetInfo.url, { cache: "no-store" });
+
+              if (!response.ok) {
+                lib.log(`Failed to fetch audio: ${id} -> ${assetInfo.url} (${response.status})`);
+                return resolve();
+              }
+
+              const contentType = response.headers.get("content-type") || "";
+              const arrayBuffer = await response.arrayBuffer();
+
+              // If you accidentally fetched HTML, decode will fail. This catches it early.
+              if (
+                contentType.includes("text/html") ||
+                contentType.includes("text/plain") ||
+                arrayBuffer.byteLength < 2000
+              ) {
+                lib.log(
+                  `Audio for ${id} is not valid audio (type: ${contentType || "unknown"}, bytes: ${arrayBuffer.byteLength}). Check the path/file.`
+                );
+                return resolve();
+              }
+
+              // Some browsers prefer a copy of the buffer
+              const audioBuffer = await audioContext.decodeAudioData(arrayBuffer.slice(0));
+              audioBuffers[id] = audioBuffer;
+            } catch (e) {
+              lib.log(`Error loading audio: ${id} -> ${assetInfo.url}`);
+              lib.log(String(e));
+            }
+
+            resolve();
+          });
+        });
+      }
+      function playSound(id) {
+        if (!audioContext || !audioBuffers[id]) return;
+
+        if (audioContext.state === "suspended") {
+          audioContext.resume().catch(() => {});
+        }
+
+        const source = audioContext.createBufferSource();
+        source.buffer = audioBuffers[id];
+        source.connect(audioContext.destination);
+        source.start(0);
+      }
+
+      function initGame() {
+        gameState = "ready";
+        timer = window.gameConfig.timerDuration;
+        progress = 0;
+        floorTimer = 0;
+        totalBubblesSpawned = 0;
+
+        octopus = {
+          x: CANVAS_WIDTH / 2,
+          y: OCEAN_FLOOR_Y - 100,
+          vx: 0,
+          vy: 0,
+          radius: 50 * window.gameConfig.octopusSize,
+          pose: "neutral",
+        };
+
+        bubbles = [];
+        jellyfish = [];
+        decorativeFish = [];
+        floatingMessages = [];
+
+        camera.y = octopus.y;
+
+        GRAVITY = 800 * window.gameConfig.gravityStrength;
+        BOUNCE_VELOCITY = -600 * window.gameConfig.bouncePower;
+
+        for (let i = 0; i < 5; i++) spawnJellyfish(i * 400);
+        for (let i = 0; i < 8; i++) spawnDecorativeFish();
+
+        gameOverScreen.classList.remove("show");
+        instructionsScreen.classList.remove("show");
+        countdownScreen.classList.remove("show");
+        countdownNumber.style.color = "#4ECDC4";
+        updateUI();
+
+        lastTime = performance.now();
+        lastJellyfishSpawn = lastTime;
+      }
+
+      function spawnBubble(x, y) {
+        if (gameState !== "playing") return;
+        if (bubbles.length >= window.gameConfig.maxBubbles) return;
+
+        if (totalBubblesSpawned >= 20) {
+          endGame("defeat", "Too many bubbles! You lost control!");
+          return;
+        }
+
+        const worldY = y + camera.y - CANVAS_HEIGHT / 2;
+
+        bubbles.push({
+          x,
+          y: worldY,
+          radius: 50,
+          lifetime: 4000,
+          age: 0,
+        });
+
+        totalBubblesSpawned++;
+        playSound("bubble_spawn_sfx");
+        showTapIndicator(x, y);
+        updateUI();
+      }
+
+      function showTapIndicator(x, y) {
+        const wrap = document.getElementById("gameWrap");
+        const indicator = document.createElement("div");
+        indicator.className = "tap-indicator";
+        indicator.style.left = x + "px";
+        indicator.style.top = y + "px";
+        wrap.appendChild(indicator);
+
+        setTimeout(() => {
+          if (indicator && indicator.parentNode) indicator.parentNode.removeChild(indicator);
+        }, 600);
+      }
+
+      function spawnJellyfish(offsetY = 0) {
+        const type = Math.random() < 0.7 ? "normal" : "highbounce";
+        const side = Math.random() < 0.5 ? "left" : "right";
+        const speed = (80 + Math.random() * 40) * window.gameConfig.jellyfishSpeed;
+
+        const spawnY = camera.y - 200 - Math.random() * 800 - offsetY;
+
+        jellyfish.push({
+          x: side === "left" ? -100 : CANVAS_WIDTH + 100,
+          y: spawnY,
+          vx: side === "left" ? speed : -speed,
+          type,
+          width: 120,
+          height: 100,
+        });
+      }
+
+      function spawnDecorativeFish() {
+        const types = ["yellow", "teal", "red"];
+        const type = types[Math.floor(Math.random() * types.length)];
+        const side = Math.random() < 0.5 ? "left" : "right";
+        const speed = 30 + Math.random() * 50;
+
+        decorativeFish.push({
+          x: side === "left" ? -50 : CANVAS_WIDTH + 50,
+          y: Math.random() * OCEAN_FLOOR_Y,
+          vx: side === "left" ? speed : -speed,
+          type,
+          size: 40 + Math.random() * 20,
+        });
+      }
+
+      function updatePhysics(dt) {
+        if (gameState !== "playing") return;
+
+        dt = Math.min(dt, 0.11);
+
+        timer -= dt;
+        if (timer <= 0) {
+          timer = 0;
+          endGame("defeat", "Time's up!");
+          return;
+        }
+
+        octopus.vy += GRAVITY * dt;
+
+        octopus.x += octopus.vx * dt;
+        octopus.y += octopus.vy * dt;
+
+        if (octopus.x < octopus.radius) {
+          octopus.x = octopus.radius;
+          octopus.vx = 0;
+        }
+        if (octopus.x > CANVAS_WIDTH - octopus.radius) {
+          octopus.x = CANVAS_WIDTH - octopus.radius;
+          octopus.vx = 0;
+        }
+
+        if (octopus.y > OCEAN_FLOOR_Y - octopus.radius) {
+          octopus.y = OCEAN_FLOOR_Y - octopus.radius;
+          octopus.vy = 0;
+          floorTimer += dt;
+
+          if (floorTimer >= 2) {
+            endGame("defeat", "You sank to the bottom!");
+            return;
+          }
+        } else {
+          floorTimer = 0;
+        }
+
+        if (octopus.vy < -300) octopus.pose = "stretched";
+        else if (octopus.vy > 200) octopus.pose = "neutral";
+
+        for (let i = bubbles.length - 1; i >= 0; i--) {
+          bubbles[i].age += dt * 1000;
+          if (bubbles[i].age >= bubbles[i].lifetime) {
+            bubbles.splice(i, 1);
+            playSound("bubble_pop_sfx");
+          }
+        }
+
+        for (let i = floatingMessages.length - 1; i >= 0; i--) {
+          floatingMessages[i].age += dt * 1000;
+          floatingMessages[i].y -= 50 * dt;
+          if (floatingMessages[i].age >= floatingMessages[i].lifetime) {
+            floatingMessages.splice(i, 1);
+          }
+        }
+
+        for (let i = jellyfish.length - 1; i >= 0; i--) {
+          jellyfish[i].x += jellyfish[i].vx * dt;
+          if (jellyfish[i].x < -200 || jellyfish[i].x > CANVAS_WIDTH + 200) {
+            jellyfish.splice(i, 1);
+          }
+        }
+
+        for (let i = decorativeFish.length - 1; i >= 0; i--) {
+          decorativeFish[i].x += decorativeFish[i].vx * dt;
+          if (decorativeFish[i].x < -100 || decorativeFish[i].x > CANVAS_WIDTH + 100) {
+            decorativeFish.splice(i, 1);
+            spawnDecorativeFish();
+          }
+        }
+
+        checkCollisions();
+        updateCamera();
+
+        progress = Math.max(
+          0,
+          Math.min(100, ((OCEAN_FLOOR_Y - octopus.y) / OCEAN_FLOOR_Y) * 100)
+        );
+
+        if (progress >= 100) {
+          endGame("victory", "You reached the surface!");
+          return;
+        }
+
+        const now = performance.now();
+        if (now - lastJellyfishSpawn > JELLYFISH_SPAWN_INTERVAL) {
+          spawnJellyfish();
+          lastJellyfishSpawn = now;
+        }
+      }
+
+      function checkCollisions() {
+        if (octopus.vy <= 0) return;
+
+        for (let i = bubbles.length - 1; i >= 0; i--) {
+          const bubble = bubbles[i];
+          const dx = octopus.x - bubble.x;
+          const dy = octopus.y - bubble.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < octopus.radius + bubble.radius) {
+            octopus.vy = BOUNCE_VELOCITY * 0.9;
+            octopus.pose = "squashed";
+            setTimeout(() => {
+              if (octopus && octopus.pose === "squashed") octopus.pose = "neutral";
+            }, 100);
+
+            bubbles.splice(i, 1);
+            playSound("bounce_sfx");
+            break;
+          }
+        }
+
+        for (let jelly of jellyfish) {
+          const dx = octopus.x - jelly.x;
+          const dy = octopus.y - jelly.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < octopus.radius + jelly.width / 2) {
+            const bounceMultiplier = jelly.type === "highbounce" ? 1.5 : 1.0;
+            octopus.vy = BOUNCE_VELOCITY * bounceMultiplier;
+            octopus.pose = "squashed";
+            setTimeout(() => {
+              if (octopus && octopus.pose === "squashed") octopus.pose = "neutral";
+            }, 100);
+
+            const message = rewards[Math.floor(Math.random() * rewards.length)];
+            floatingMessages.push({
+              x: jelly.x,
+              y: jelly.y,
+              text: message,
+              lifetime: 3000,
+              age: 0,
+            });
+
+            playSound("bounce_sfx");
+            break;
+          }
+        }
+      }
+
+      function updateCamera() {
+        const targetY = octopus.y;
+        camera.y += (targetY - camera.y) * 0.1;
+        camera.y = Math.max(SURFACE_Y, Math.min(OCEAN_FLOOR_Y, camera.y));
+      }
+
+      function getOceanColor(y) {
+        const scheme = COLOR_SCHEMES[window.gameConfig.oceanColorScheme] || COLOR_SCHEMES.classic;
+        const depth = (OCEAN_FLOOR_Y - y) / OCEAN_FLOOR_Y;
+
+        let colorIndex;
+        if (depth < 0.25) colorIndex = 0;
+        else if (depth < 0.6) colorIndex = 1;
+        else if (depth < 0.85) colorIndex = 2;
+        else colorIndex = 3;
+
+        return scheme[colorIndex];
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+        const topColor = getOceanColor(camera.y - CANVAS_HEIGHT / 2);
+        const bottomColor = getOceanColor(camera.y + CANVAS_HEIGHT / 2);
+        const gradient = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
+        gradient.addColorStop(0, topColor);
+        gradient.addColorStop(1, bottomColor);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+        if (camera.y > OCEAN_FLOOR_Y - CANVAS_HEIGHT) {
+          const floorOffset = OCEAN_FLOOR_Y - camera.y + CANVAS_HEIGHT / 2;
+
+          if (assets.coral_silhouette_1) {
+            ctx.globalAlpha = 0.6;
+            drawImage(assets.coral_silhouette_1.img, 100, floorOffset - 100, 150, 120);
+            drawImage(assets.coral_silhouette_1.img, 500, floorOffset - 80, 120, 100);
+          }
+          if (assets.coral_silhouette_2) {
+            drawImage(assets.coral_silhouette_2.img, 300, floorOffset - 90, 140, 140);
+          }
+
+          if (assets.seaweed_strand_1) {
+            drawImage(assets.seaweed_strand_1.img, 50, floorOffset - 200, 60, 200);
+            drawImage(assets.seaweed_strand_1.img, 600, floorOffset - 180, 70, 180);
+          }
+          if (assets.seaweed_strand_2) {
+            drawImage(assets.seaweed_strand_2.img, 200, floorOffset - 160, 70, 160);
+            drawImage(assets.seaweed_strand_2.img, 450, floorOffset - 150, 80, 150);
+          }
+
+          ctx.globalAlpha = 1;
+        }
+
+        ctx.globalAlpha = 0.5;
+        for (let fish of decorativeFish) {
+          const screenY = fish.y - camera.y + CANVAS_HEIGHT / 2;
+          if (screenY > -100 && screenY < CANVAS_HEIGHT + 100) {
+            const assetId = `decorative_fish_${fish.type}`;
+            if (assets[assetId]) {
+              const flipX = fish.vx < 0;
+              drawImage(assets[assetId].img, fish.x, screenY, fish.size, fish.size, flipX);
+            }
+          }
+        }
+        ctx.globalAlpha = 1;
+
+        for (let jelly of jellyfish) {
+          const screenY = jelly.y - camera.y + CANVAS_HEIGHT / 2;
+          if (screenY > -200 && screenY < CANVAS_HEIGHT + 200) {
+            const assetId = jelly.type === "highbounce" ? "jellyfish_highbounce" : "jellyfish_normal";
+            if (assets[assetId]) {
+              const pulse = Math.sin(Date.now() / 500) * 0.05 + 1;
+              drawImage(assets[assetId].img, jelly.x, screenY, jelly.width * pulse, jelly.height * pulse);
+            }
+          }
+        }
+
+        ctx.globalAlpha = window.gameConfig.bubbleOpacity;
+        for (let bubble of bubbles) {
+          const screenY = bubble.y - camera.y + CANVAS_HEIGHT / 2;
+          if (screenY > -100 && screenY < CANVAS_HEIGHT + 100) {
+            drawBubble(bubble.x, screenY, bubble.radius);
+          }
+        }
+        ctx.globalAlpha = 1;
+
+        for (let msg of floatingMessages) {
+          const screenY = msg.y - camera.y + CANVAS_HEIGHT / 2;
+          if (screenY > -100 && screenY < CANVAS_HEIGHT + 100) {
+            const alpha = 1 - msg.age / msg.lifetime;
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = "#4ECDC4";
+            ctx.font = "bold 18px Fredoka, Arial";
+            ctx.textAlign = "center";
+            ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
+            ctx.shadowBlur = 8;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 2;
+            ctx.fillText(msg.text, msg.x, screenY);
+            ctx.shadowColor = "transparent";
+            ctx.globalAlpha = 1;
+          }
+        }
+
+        const octopusScreenY = octopus.y - camera.y + CANVAS_HEIGHT / 2;
+        const poseAsset = `octopus_${octopus.pose}`;
+        if (assets[poseAsset]) {
+          const size = octopus.radius * 2;
+          drawImage(assets[poseAsset].img, octopus.x, octopusScreenY, size, size);
+        }
+
+        if (progress > 80) {
+          const surfaceY = SURFACE_Y - camera.y + CANVAS_HEIGHT / 2;
+          if (surfaceY > -50 && surfaceY < CANVAS_HEIGHT + 50) {
+            ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+            ctx.fillRect(0, surfaceY - 20, CANVAS_WIDTH, 40);
+            ctx.fillStyle = "white";
+            ctx.font = "bold 32px Fredoka, Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("SURFACE", CANVAS_WIDTH / 2, surfaceY + 10);
+          }
+        }
+      }
+
+      function drawImage(img, x, y, width, height, flipX = false) {
+        ctx.save();
+        ctx.translate(x, y);
+        if (flipX) ctx.scale(-1, 1);
+        ctx.drawImage(img, -width / 2, -height / 2, width, height);
+        ctx.restore();
+      }
+
+      function drawBubble(x, y, radius) {
+        const gradient = ctx.createRadialGradient(
+          x - radius * 0.3,
+          y - radius * 0.3,
+          0,
+          x,
+          y,
+          radius
+        );
+        gradient.addColorStop(0, "rgba(212, 241, 249, 0.9)");
+        gradient.addColorStop(1, "rgba(212, 241, 249, 0.3)");
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+        ctx.beginPath();
+        ctx.arc(x - radius * 0.3, y - radius * 0.3, radius * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      function updateUI() {
+        timerEl.textContent = Math.ceil(timer);
+        timerEl.classList.toggle("warning", timer < 10);
+
+        bubbleCounterEl.textContent = `Bubbles: ${totalBubblesSpawned}/20`;
+
+        progressFillEl.style.height = progress + "%";
+        progressTextEl.textContent = Math.floor(progress) + "%";
+      }
+
+      function endGame(result, message) {
+        gameState = result;
+
+        gameOverTitle.textContent = result === "victory" ? "Victory!" : "Game Over";
+        gameOverTitle.className = "game-over-title " + result;
+        gameOverMessage.textContent = message;
+        gameOverScreen.classList.add("show");
+
+        playSound(result === "victory" ? "victory_sfx" : "defeat_sfx");
+      }
+
+      function gameLoop(timestamp) {
+        const dt = Math.min((timestamp - lastTime) / 1000, 0.1);
+        lastTime = timestamp;
+
+        if (currentMode === "play") {
+          updatePhysics(dt);
+          updateUI();
+        }
+
+        render();
+        animationId = requestAnimationFrame(gameLoop);
+      }
+
+      function handleInput(x, y) {
+        if (currentMode === "edit") return;
+        if (countdownActive) return;
+        if (gameState !== "playing") return;
+        spawnBubble(x, y);
+      }
+
+      canvas.addEventListener("click", (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = CANVAS_WIDTH / rect.width;
+        const scaleY = CANVAS_HEIGHT / rect.height;
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
+        handleInput(x, y);
+      });
+
+      canvas.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = CANVAS_WIDTH / rect.width;
+        const scaleY = CANVAS_HEIGHT / rect.height;
+        const touch = e.touches[0];
+        const x = (touch.clientX - rect.left) * scaleX;
+        const y = (touch.clientY - rect.top) * scaleY;
+        handleInput(x, y);
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (currentMode === "edit") return;
+        if (!octopus) return;
+
+        if (e.code === "Space") {
+          e.preventDefault();
+          spawnBubble(octopus.x, octopus.y - camera.y + CANVAS_HEIGHT / 2);
+        } else if (e.code === "KeyR" && gameState !== "playing") {
+          initGame();
+        }
+      });
+
+      restartButton.addEventListener("click", () => initGame());
+
+      function startCountdown() {
+        countdownActive = true;
+        instructionsScreen.classList.remove("show");
+        countdownScreen.classList.add("show");
+
+        let count = 3;
+        countdownNumber.textContent = count;
+
+        const countdownInterval = setInterval(() => {
+          count--;
+
+          if (count > 0) {
+            countdownNumber.textContent = count;
+          } else if (count === 0) {
+            countdownNumber.textContent = "GO!";
+            countdownNumber.style.color = "#FFD700";
+          } else {
+            clearInterval(countdownInterval);
+            countdownScreen.classList.remove("show");
+            countdownActive = false;
+            gameState = "playing";
+          }
+        }, 1000);
+      }
+
+      startButton.addEventListener("click", () => startCountdown());
+
+      async function run(mode) {
+        lib.log("run() called. Mode: " + mode);
+        currentMode = mode;
+
+        lib.showGameParameters({ name: "Game Settings", params: {} });
+
+        await preloadAssets();
+        initGame();
+
+        if (mode === "play") instructionsScreen.classList.add("show");
+
+        if (animationId) cancelAnimationFrame(animationId);
+        lastTime = performance.now();
+        gameLoop(lastTime);
+      }
+
+      run("play");
+    </script>
+  </body>
+</html>
