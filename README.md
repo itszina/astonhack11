@@ -22,4 +22,7 @@ Each tentacle represents a Majestic service and provides user interaction throug
 https://itszina.github.io/astonhack11
 
 ## Team Members
-- Add names here
+- Zina Samha
+- Sama Alzahrani
+- Tarfah
+- Jennifer
